@@ -1,79 +1,69 @@
 import { getImage } from 'components/services/getImage';
-import React, { Component } from 'react';
+import React, { useState, useEffect} from 'react';
 import Loader from 'components/Loader/Loader';
 import AddImageBtn from '../Button/Button';
 import GalleryItem from './imageGalleryItem';
 
-class ImageGallery extends Component {
-  state = {
-    images: [],
-    loading: false,
-    page: 1,
-  };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.page !== this.state.page ||
-      prevProps.value !== this.props.value
+export default function ImageGallery({value, pageApp}) {
+  
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState(null);
+  
+
+  const handleLoadMore = (e) => {
+  e.preventDefault();
+  setPage(prevState => prevState + 1);
+};
+  
+  const handleEmptyState = () => {
+    setImages([]);
+    setPage(1); 
+  };
+  const renderPage =()=> {
+  if (
+      pageApp !== page ||
+      value !== images
     ) {
-      if (prevProps.value !== this.props.value) {
-        this.handleEmptyState();
+      if (value !== images) {
+        handleEmptyState();
       }
-      this.setState({ loading: true });
-      getImage(this.props.value.trim(), this.state.page)
+      setLoading(true);
+      getImage(value.trim(), page)
         .then(response => response.json())
-        .then(images => {
-          this.setState({
-            images:
-              this.state.page === 1
-                ? [...images.hits]
-                : [...this.state.images, ...images.hits],
-          });
+        .then(imagesEl => {
+          setImages(
+            page === 1
+              ? [...imagesEl.hits]
+              : [...imagesEl.hits, ...imagesEl.hits]
+          );
         })
-        .catch(error => {
-          console.log('error >>', error);
+        .catch(errorEl => {
+          console.log('error >>', errorEl);
+          setError(errorEl)
         })
         .finally(() => {
-          this.setState({ loading: false });
+          setLoading(false );
         });
     }
-    // if (prevProps.value !== this.props.value) {
-    //     this.handleEmptyState();
-    //     this.setState({loading:true})
-    //     getImage(this.props.value.trim())
-    //         .then((response) => response.json())
-    //         .then((images) => {
-    //             this.setState({
-    //                 images:[...this.state.images, ...images.hits]
-    //         })
-    //     }).catch((error) => {
-    //         console.log('error >>', error)
-    //     }).finally(() => {
-    //         this.setState({loading:false})
-    //     })
-    // }
-  }
-  handleLoadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
-  };
+}
 
-  handleEmptyState = () => {
-    this.setState({
-      images: [],
-      page: 1,
-    });
-  };
+  useEffect(() => {
+    if (!value) {
+      return
+    }
+    renderPage();
+}, [value, page])
 
-  render() {
-    return (
-      <>
-        {this.state.error && <h1>{this.state.error}</h1>}
-        {this.state.loading && <Loader></Loader>}
-        {this.state.images && (
+  return (
+  <>
+        {error && <h1>{error}</h1>}
+        {loading && <Loader></Loader>}
+        {images && (
           <ul className="ImageGallery">
-            {this.state.images.map(el => {
+            {images.map(el => {
               return (
                 <GalleryItem
                   key={el.id}
@@ -85,32 +75,84 @@ class ImageGallery extends Component {
             })}
           </ul>
         )}
-        {this.state.images.length > 0 ? (
-          <AddImageBtn onClick={this.handleLoadMore}></AddImageBtn>
+        {images.length > 0 ? (
+          <AddImageBtn onClick={handleLoadMore}></AddImageBtn>
         ) : null}
-      </>
-    );
-  }
+  </>
+  )
 }
 
-export default ImageGallery;
+// class ImageGallery extends Component {
+//   state = {
+//     images: [],
+//     loading: false,
+//     page: 1,
+//   };
 
-// <li  key={el.id} className="gallery-item">
-// <img src={el.webformatURL} alt={el.tags} />
-// </li>
-
-// if (prevProps.value !== this.props.value) {
-//     this.handleEmptyState();
-//     this.setState({loading:true})
-//      return getImage(this.props.value.trim(), this.state.page, this.props.perPage)
-//         .then((response) => response.json())
-//         .then((images) => {
-//             this.setState({
-//                 images:[...this.state.images, ...images.hits]
+//   componentDidUpdate(prevProps, prevState) {
+//     if (
+//       prevState.page !== this.state.page ||
+//       prevProps.value !== this.props.value
+//     ) {
+//       if (prevProps.value !== this.props.value) {
+//         this.handleEmptyState();
+//       }
+//       this.setState({ loading: true });
+//       getImage(this.props.value.trim(), this.state.page)
+//         .then(response => response.json())
+//         .then(images => {
+//           this.setState({
+//             images:
+//               this.state.page === 1
+//                 ? [...images.hits]
+//                 : [...this.state.images, ...images.hits],
+//           });
 //         })
-//     }).catch((error) => {
-//         console.log('error >>', error)
-//     }).finally(() => {
-//         this.setState({loading:false})
-//     })
+//         .catch(error => {
+//           console.log('error >>', error);
+//         })
+//         .finally(() => {
+//           this.setState({ loading: false });
+//         });
+//     }
+//   }
+//   handleLoadMore = () => {
+//     this.setState(prevState => ({
+//       page: prevState.page + 1,
+//     }));
+//   };
+
+//   handleEmptyState = () => {
+//     this.setState({
+//       images: [],
+//       page: 1,
+//     });
+//   };
+
+//   render() {
+//     return (
+//       <>
+//         {this.state.error && <h1>{this.state.error}</h1>}
+//         {this.state.loading && <Loader></Loader>}
+//         {this.state.images && (
+//           <ul className="ImageGallery">
+//             {this.state.images.map(el => {
+//               return (
+//                 <GalleryItem
+//                   key={el.id}
+//                   src={el.webformatURL}
+//                   alt={el.tags}
+//                   srcModal={el.largeImageURL}
+//                 ></GalleryItem>
+//               );
+//             })}
+//           </ul>
+//         )}
+//         {this.state.images.length > 0 ? (
+//           <AddImageBtn onClick={this.handleLoadMore}></AddImageBtn>
+//         ) : null}
+//       </>
+//     );
+//   }
 // }
+

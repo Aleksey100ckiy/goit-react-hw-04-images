@@ -1,47 +1,72 @@
-import React, {Component} from "react";
+import React, {useState, useEffect} from "react";
 
 
-class Searchbar extends Component{
-    state = {
-      value: '',
-    }
+export default function Searchbar({ onSearch }){ 
 
-    handleChange = ({target:{value}}) => {
-        this.setState({value})
-    }
+  const [value, setValue] = useState('');
 
-    handleSubmit = (e) => {
-        e.preventDefault()
-      if (!this.state.value) {
-        return alert('Ваш запит пустий')
-      }
-        this.props.onSearch(this.state.value)
-        this.setState({ value: '' })
-      
-    }
+  const handleChange = ({ target: { value } }) => {
+    setValue(value);
+  }
   
+  const handleSubmit = (e) => {
+        e.preventDefault()
+       if (!value) {
+       return alert('Ваш запит пустий')
+      }
+        onSearch(value);
+        setValue('');
+  }
+  
+  useEffect(()=> {
+    
+  }, [value])
 
-    render() {
-        return (
-<header className="Searchbar">
-  <form className="SearchForm " onSubmit={this.handleSubmit}>
-    <button type="submit" className="Button">
-      <span className="Button-label">Search</span>
-    </button>
+  return (
+    <header className="Searchbar">
+      <form className="SearchForm " onSubmit={handleSubmit}>
+        <button type="submit" className="Button">
+          <span className="Button-label">Search</span>
+        </button>
 
-    <input
-      className="SearchForm-input"
-      type="text"
-      autocomplete="off"
-      autofocus
-      placeholder="Search images and photos"
-      value={this.state.value}
-      onChange={this.handleChange}
-    />
-  </form>
-</header>
-        )
-    }
+        <input
+        className="SearchForm-input"
+        type="text"
+        //autocomplete="off"
+        //autofocus
+        placeholder="Search images and photos"
+        value={value}
+        onChange={handleChange}/>
+      </form>
+    </header>
+    
+  )
 }
 
-export default Searchbar;
+//     state = {
+//       value: '',
+//     }
+
+//     handleChange = ({target:{value}}) => {
+//         this.setState({value})
+//     }
+
+//     handleSubmit = (e) => {
+//         e.preventDefault()
+//       if (!this.state.value) {
+//         return alert('Ваш запит пустий')
+//       }
+//         this.props.onSearch(this.state.value)
+//         this.setState({ value: '' })
+      
+//     }
+  
+
+//     render() {
+//         return (
+
+//         )
+//     }
+// }
+
+// export default Searchbar;

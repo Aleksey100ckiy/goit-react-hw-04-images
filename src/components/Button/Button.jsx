@@ -2,7 +2,7 @@ import React from "react";
 
 const AddImageBtn = ({ onClick }) => {
     return (
-        <button onClick={onClick} type="Button">Load more</button>
+        <button onClick={onClick} type="Button" className='Button'>Load more</button>
     )
 }
 

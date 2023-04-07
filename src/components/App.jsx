@@ -1,28 +1,40 @@
-import React, {Component} from "react";
+import React, {useState, useEffect} from "react";
 import Searchbar from "./Searchbar/Searschbar";
 import ImageGallery from "./ImageGallery/ImageGallery";
 
 
-export class App extends Component {
-  state = {
-    textSearch: '',
+export default function App() {
+  
+  const [textSearch, setTextSearch] = useState('');
+  const [page, setPage] = useState(1);
     
-  }
- 
-  handleSubmit = (textSearch) => {
-    this.setState({textSearch})
+    const handleSubmit = (textSearch)=>{
+      setTextSearch(textSearch);
+      
   }
 
-  render() {
-    console.log('state', this.state );
-    return(<div className="App"
-    >
-      <Searchbar onSearch={this.handleSubmit}></Searchbar>
-      <ImageGallery value={this.state.textSearch} ></ImageGallery>
-    </div>)
+  useEffect(() => {
+
+  },[textSearch])
+
+    return(
+      <div className = "App">
+        <Searchbar onSearch={handleSubmit}></Searchbar>
+        <ImageGallery value={textSearch} pageApp={page} ></ImageGallery>
+      </div>
+      )
+  }
+ 
+//   handleSubmit = (textSearch) => {
+//     this.setState({textSearch})
+//   }
+
+//   render() {
+//     console.log('state', this.state );
+//     return()
    
- }
-}
+//  }
+// }
  
 
 // page={this.state.page} perPage={this.state.perPage}
