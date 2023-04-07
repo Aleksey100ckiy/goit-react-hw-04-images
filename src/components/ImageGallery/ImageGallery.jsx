@@ -5,7 +5,7 @@ import AddImageBtn from '../Button/Button';
 import GalleryItem from './imageGalleryItem';
 
 
-export default function ImageGallery({value, pageApp}) {
+export default function ImageGallery({value}) {
   
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,6 @@ export default function ImageGallery({value, pageApp}) {
       return
     }
     if (
-          pageApp !== page ||
           valueEl !== images
         ) {
           if (valueEl !== images) {
@@ -44,7 +43,7 @@ export default function ImageGallery({value, pageApp}) {
               setImages(
                 page === 1
                   ? [...imagesEl.hits]
-                  : [...imagesEl.hits, ...imagesEl.hits]
+                  : (prevState => [...prevState, ...imagesEl.hits])
               );
             })
             .catch(errorEl => {
