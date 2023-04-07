@@ -11,7 +11,7 @@ export default function ImageGallery({value, pageApp}) {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [error, setError] = useState(null);
-  
+  const valueEl = value;
 
   const handleLoadMore = (e) => {
   e.preventDefault();
@@ -22,40 +22,40 @@ export default function ImageGallery({value, pageApp}) {
     setImages([]);
     setPage(1); 
   };
-  const renderPage =()=> {
-  if (
-      pageApp !== page ||
-      value !== images
-    ) {
-      if (value !== images) {
-        handleEmptyState();
-      }
-      setLoading(true);
-      getImage(value.trim(), page)
-        .then(response => response.json())
-        .then(imagesEl => {
-          setImages(
-            page === 1
-              ? [...imagesEl.hits]
-              : [...imagesEl.hits, ...imagesEl.hits]
-          );
-        })
-        .catch(errorEl => {
-          console.log('error >>', errorEl);
-          setError(errorEl)
-        })
-        .finally(() => {
-          setLoading(false );
-        });
-    }
-}
+  
+  
+
 
   useEffect(() => {
-    if (!value) {
+    if (!valueEl) {
       return
     }
-    renderPage();
-}, [value, page])
+    if (
+          pageApp !== page ||
+          valueEl !== images
+        ) {
+          if (valueEl !== images) {
+            handleEmptyState();
+          }
+          setLoading(true);
+          getImage(valueEl.trim(), page)
+            .then(response => response.json())
+            .then(imagesEl => {
+              setImages(
+                page === 1
+                  ? [...imagesEl.hits]
+                  : [...imagesEl.hits, ...imagesEl.hits]
+              );
+            })
+            .catch(errorEl => {
+              console.log('error >>', errorEl);
+              setError(errorEl)
+            })
+            .finally(() => {
+              setLoading(false );
+            });
+        }
+}, [valueEl, page])
 
   return (
   <>
