@@ -11,7 +11,8 @@ export default function ImageGallery({value}) {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [error, setError] = useState(null);
-  const valueEl = value;
+  const [query, setQuery] = useState([])
+  const valueEl = value
 
   const handleLoadMore = (e) => {
   e.preventDefault();
@@ -22,20 +23,20 @@ export default function ImageGallery({value}) {
     setImages([]);
     setPage(1); 
   };
-  
-  
 
 
   useEffect(() => {
+   
     if (!valueEl) {
       return
     }
+    if (value !== valueEl) {
+      handleEmptyState();
+    }
+
     if (
           valueEl !== images
         ) {
-          if (valueEl !== images) {
-            handleEmptyState();
-          }
           setLoading(true);
           getImage(valueEl.trim(), page)
             .then(response => response.json())
@@ -53,8 +54,9 @@ export default function ImageGallery({value}) {
             .finally(() => {
               setLoading(false );
             });
-        }
-}, [valueEl, page])
+    }
+//eslint-disable-next-line react-hooks/exhaustive-deps
+}, [valueEl, page, value])
 
   return (
   <>
